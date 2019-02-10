@@ -1,0 +1,11 @@
+# Virual enviroment folder 
+venv/
+
+# Visual studio code folder 
+.vscode/ 
+
+# Caches
+__pycache__ 
+
+# All log files in root folder 
+*.log

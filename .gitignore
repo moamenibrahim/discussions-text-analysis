@@ -9,3 +9,6 @@ __pycache__
 
 # All log files in root folder 
 *.log
+
+# Ignore data folders
+scraped_data/

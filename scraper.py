@@ -6,7 +6,6 @@ import errno
 class CancerSpider(scrapy.Spider):
     filenum = 0
     allowed_subwords=["Terveys","Paikkakunnat"]
-
     custom_settings={
         'DOWNLOAD_DELAY':'0.75'
     }
@@ -33,7 +32,7 @@ class CancerSpider(scrapy.Spider):
         if next_link:
             yield response.follow(next_link,self.parse)
 
-    def parseThread(self,response,subword):
+    def parseThread(self,response,subword,filenum,filepath):
         filenum+=1
         filename=subword+filenum+'.txt'
         f = open(filepath/filename,'w')
@@ -43,18 +42,18 @@ class CancerSpider(scrapy.Spider):
         datastore['user']=response.css('div.user-info-big.p.user-info-name ::text').extract_first().strip()
         datastore['thread-body']=response.css('div.thread-text ::text').extract_first().strip()
         datastore['answers']={}
-        for answer in response.css('div.answer-container'):
+        for answeritem in response.css('div.answer-container'):
             answer={}
-            answer['answer-body']=answer.css('div.answer-text ::text').extract_first().strip()
-            answer['timestamp']=answer.css('p.user-info-timestamp ::text').extract_first().strip()
-            answer['user']=answer.css('p.user-info-name ::text').extract_first().strip()
+            answer['answer-body']=answeritem.css('div.answer-text ::text').extract_first().strip()
+            answer['timestamp']=answeritem.css('p.user-info-timestamp ::text').extract_first().strip()
+            answer['user']=answeritem.css('p.user-info-name ::text').extract_first().strip()
             answer['comments']={}
             if response.css('div.comments-list'):
-                for comment in response.css('div.comment'):
+                for commentitem in response.css('div.comment'):
                     comment={}
-                    comment['comment-body']=comment.css('div.comment-text ::text').extract_first().strip()
-                    comment['timestamp']=comment.css('p.user-info-timestamp ::text').extract_first().strip()
-                    comment['user']=comment.css('p.user-info-name ::text').extract_first().strip()
+                    comment['comment-body']=commentitem.css('div.comment-text ::text').extract_first().strip()
+                    comment['timestamp']=commentitem.css('p.user-info-timestamp ::text').extract_first().strip()
+                    comment['user']=commentitem.css('p.user-info-name ::text').extract_first().strip()
                     answer['comments'].append(comment)
             datastore['answers'].append(answer)
         f.write(datastore)

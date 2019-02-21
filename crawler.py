@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import re
 import os
 import json
-
+import pymongo
 
 def catch_main_discussions():
     # After opening the url above, Selenium clicks the specific agency link
@@ -139,29 +139,28 @@ def catch_replies():
     return
 
 
+def push_to_database(mydict):
+    myclient = pymongo.MongoClient("mongodb://localhost:27015/")
+    mydb = myclient["mydatabase"]
+    mycol = mydb["users"]
+    mycol.insert(mydict,check_keys=False)
+    return
+
 # launch url
 url_base = "https://www.cancerresearchuk.org/about-cancer/cancer-chat/users/"
 usernames = ["lonelygirl", "billygoat", "foxdale", "andydorro1",
              "dragonfly46", "dondon0808", "anchor1707", "twintwo", "parmz"]
-
 
 for user in usernames:
     # create a new Firefox session
     driver = webdriver.Firefox()
     driver.implicitly_wait(30)
     driver.get(url_base+user)
-
     data_list = []  # empty list
-
     catch_main_discussions()
     catch_replies()
-
     # end the Selenium browser session
     driver.quit()
+    push_to_database({user:data_list})
 
-    # get current working directory
-    path = os.getcwd()
-    # open, write, and close the file
-    f = open(path + "/scraped_data/"+str(user)+".json", "w+")  # FHSU
-    json.dump(fp=f, obj=data_list)
-    f.close()
+print("done crawling")

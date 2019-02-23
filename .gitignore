@@ -14,7 +14,4 @@ __pycache__
 scraped_data/
 
 # Residual database files
-data/db/diagnostic.data/
-data/db/journal
-data/db/json
-data/db/WiredTiger.turtle
+mongodb/

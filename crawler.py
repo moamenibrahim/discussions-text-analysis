@@ -6,6 +6,8 @@ import os
 import json
 import pymongo
 
+database_url="mongodb://localhost:12345/"
+
 def catch_main_discussions():
     # After opening the url above, Selenium clicks the specific agency link
     python_buttons = driver.find_elements_by_xpath(
@@ -140,7 +142,7 @@ def catch_replies():
 
 
 def push_to_database(mydict):
-    myclient = pymongo.MongoClient("mongodb://localhost:27015/")
+    myclient = pymongo.MongoClient(database_url)
     mydb = myclient["mydatabase"]
     mycol = mydb["users"]
     mycol.insert(mydict,check_keys=False)

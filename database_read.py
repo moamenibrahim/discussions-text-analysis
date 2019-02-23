@@ -19,7 +19,6 @@ with pymongo.MongoClient(database_url,port=12345) as client:
             for item in post[thread]:
                 time = list(item.keys())[0]
                 text = list(item.values())[0]
-                data.append({user,thread,time,text})
-
+                data.append([user,thread,time,text])
 df=pd.DataFrame(data, columns = ["user", "thread", "time", "text"])
 df.to_csv('scraped_data/cancerUK.csv', sep='\t')

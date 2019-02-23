@@ -5,6 +5,7 @@ import re
 import os
 import json
 import pymongo
+import pandas as pd
 
 database_url="mongodb://localhost:12345/"
 
@@ -148,21 +149,33 @@ def push_to_database(mydict):
     mycol.insert(mydict,check_keys=False)
     return
 
+def push_to_csv(user, data):
+    for post in data: 
+        for thread in post:
+            for item in post[thread]:
+                time = list(item.keys())[0]
+                text = list(item.values())[0]
+                csv_data.append([user,thread,time,text])
+    
+
 # launch url
 url_base = "https://www.cancerresearchuk.org/about-cancer/cancer-chat/users/"
 usernames = ["lonelygirl", "billygoat", "foxdale", "andydorro1",
              "dragonfly46", "dondon0808", "anchor1707", "twintwo", "parmz"]
 
+csv_data = []
 for user in usernames:
-    # create a new Firefox session
-    driver = webdriver.Firefox()
+    driver = webdriver.Firefox()    # create a new Firefox session
     driver.implicitly_wait(30)
     driver.get(url_base+user)
     data_list = []  # empty list
     catch_main_discussions()
     catch_replies()
-    # end the Selenium browser session
-    driver.quit()
+    driver.quit()   # end the Selenium browser session
     push_to_database({user:data_list})
+    push_to_csv(user,data_list)
+
+df=pd.DataFrame(csv_data, columns = ["user", "thread", "time", "text"])
+df.to_csv('scraped_data/cancerUK.csv', sep='\t')
 
 print("done crawling")

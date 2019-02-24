@@ -15,3 +15,6 @@ scraped_data/
 
 # Residual database files
 mongodb/
+
+# Notebook checkpoints
+*-checkpoint.ipynb

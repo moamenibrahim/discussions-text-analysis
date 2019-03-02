@@ -1,11 +1,12 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup
+import pandas as pd
+import time
 import re
 import os
 import json
 import pymongo
-import pandas as pd
 
 database_url="mongodb://localhost:12345/"
 
@@ -149,6 +150,7 @@ def push_to_database(mydict):
     mycol.insert(mydict,check_keys=False)
     return
 
+
 def push_to_csv(user, data):
     for post in data: 
         for thread in post:
@@ -172,10 +174,11 @@ for user in usernames:
     catch_main_discussions()
     catch_replies()
     driver.quit()   # end the Selenium browser session
-    push_to_database({user:data_list})
+    # push_to_database({user:data_list})
     push_to_csv(user,data_list)
+    time.sleep(1)
 
 df=pd.DataFrame(csv_data, columns = ["user", "thread", "time", "text"])
-df.to_csv('scraped_data/cancerUK.csv', sep='\t')
+df.to_csv('scraped_data/cancerUK.csv', header=True, sep=',', index=False)
 
-print("done crawling")
+print("Done crawling")

@@ -1,5 +1,6 @@
 # Virual enviroment folder 
 venv/
+venv-linux/
 
 # Visual studio code folder 
 .vscode/ 

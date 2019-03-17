@@ -8,7 +8,8 @@ import os
 import json
 import pymongo
 
-database_url="mongodb://localhost:12345/"
+database_url = "mongodb://localhost:12345/"
+
 
 def catch_main_discussions():
     # After opening the url above, Selenium clicks the specific agency link
@@ -147,18 +148,18 @@ def push_to_database(mydict):
     myclient = pymongo.MongoClient(database_url)
     mydb = myclient["mydatabase"]
     mycol = mydb["users"]
-    mycol.insert(mydict,check_keys=False)
+    mycol.insert(mydict, check_keys=False)
     return
 
 
 def push_to_csv(user, data):
-    for post in data: 
+    for post in data:
         for thread in post:
             for item in post[thread]:
                 time = list(item.keys())[0]
                 text = list(item.values())[0]
-                csv_data.append([user,thread,time,text])
-    
+                csv_data.append([user, thread, time, text])
+
 
 # launch url
 url_base = "https://www.cancerresearchuk.org/about-cancer/cancer-chat/users/"
@@ -175,10 +176,10 @@ for user in usernames:
     catch_replies()
     driver.quit()   # end the Selenium browser session
     # push_to_database({user:data_list})
-    push_to_csv(user,data_list)
+    push_to_csv(user, data_list)
     time.sleep(1)
 
-df=pd.DataFrame(csv_data, columns = ["user", "thread", "time", "text"])
+df = pd.DataFrame(csv_data, columns=["user", "thread", "time", "text"])
 df.to_csv('scraped_data/cancerUK.csv', header=True, sep=',', index=False)
 
 print("Done crawling")

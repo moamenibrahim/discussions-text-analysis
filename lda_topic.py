@@ -8,27 +8,30 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import CountVectorizer
 
+
 def preprocess_sentences(doc_complete):
-	exclude = set(string.punctuation)
-	lemma = WordNetLemmatizer()
-	norm = []
-	stop_free = [i for i in doc_complete.lower().split()]
-	punc_free = ' '.join(ch for ch in stop_free if ch not in exclude)
-	norm.append(punc_free.split())
-	return norm
+    exclude = set(string.punctuation)
+    lemma = WordNetLemmatizer()
+    norm = []
+    stop_free = [i for i in doc_complete.lower().split()]
+    punc_free = ' '.join(ch for ch in stop_free if ch not in exclude)
+    norm.append(punc_free.split())
+    return norm
+
 
 def generate_topic(input):
-	mylist=[]
-	texts = preprocess_sentences(input)
-	dictionary = corpora.Dictionary(texts)
-	doc_term_matrix = [dictionary.doc2bow(text) for text in texts]
-	Lda = gensim.models.ldamodel.LdaModel
-	ldamodel = Lda(doc_term_matrix, num_topics=20, id2word = dictionary, passes=400)
-	str = ldamodel.print_topics(num_topics=20, num_words=20)
-	s = tuple(str)
-	t = "\n".join(item[1] for item in s)
-	result = re.findall('[a-zA-ZåäöÅÄÖ]+',t)
-	for i in result:
-		if i not in mylist:
-			mylist.append(i)
-	return mylist
+    mylist = []
+    texts = preprocess_sentences(input)
+    dictionary = corpora.Dictionary(texts)
+    doc_term_matrix = [dictionary.doc2bow(text) for text in texts]
+    Lda = gensim.models.ldamodel.LdaModel
+    ldamodel = Lda(doc_term_matrix, num_topics=20,
+                   id2word=dictionary, passes=400)
+    str = ldamodel.print_topics(num_topics=20, num_words=20)
+    s = tuple(str)
+    t = "\n".join(item[1] for item in s)
+    result = re.findall('[a-zA-ZåäöÅÄÖ]+', t)
+    for i in result:
+        if i not in mylist:
+            mylist.append(i)
+    return mylist

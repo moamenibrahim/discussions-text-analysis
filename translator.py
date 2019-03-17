@@ -1,7 +1,9 @@
 from googletrans import Translator
-import json,time
+import json
+import time
 
-def translate(input_str,lang='fi'):
+
+def translate(input_str, lang='fi'):
     # time.sleep(1)
     translate_urls = ["translate.google.com", "translate.google.co.kr",
                       "translate.google.at", "translate.google.de",

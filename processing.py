@@ -15,8 +15,8 @@ def get_stanford_pos(tweet):
     """
     part of speech tagging extraction
     """
-    path_to_model = 'E:\\Work\\discussions-text-analysis\\cancer\\stanford\\stanford-postagger\\models\\'
-    path_to_jar = 'E:\\Work\\discussions-text-analysis\\cancer\\stanford\\stanford-postagger'
+    path_to_model = 'cancer/stanford/stanford-postagger/models/english-bidirectional-distsim.tagger'
+    path_to_jar = 'cancer/stanford/stanford-postagger/stanford-postagger.jar'
     st = StanfordPOSTagger(path_to_model, path_to_jar=path_to_jar)
     result = st.tag(tweet.split())
     return result
@@ -44,9 +44,9 @@ def get_stanford_named_entity(tweet):
     """ 
     get named entity recognition and check if words have entry in lexical database 
     """
-    stanford_dir = 'E:\Work\discussions-text-analysis\cancer\stanford\stanford-nertagger'
-    jarfile = stanford_dir + '\stanford-ner.jar'
-    modelfile = stanford_dir + '\classifiers\english.muc.7class.distsim.crf.ser.gz'
+    stanford_dir = 'cancer/stanford/stanford-nertagger'
+    jarfile = stanford_dir + '/stanford-ner.jar'
+    modelfile = stanford_dir + '/classifiers/english.muc.7class.distsim.crf.ser.gz'
     st = StanfordNERTagger(model_filename=modelfile, path_to_jar=jarfile)
     result = st.tag(tweet.split())
     return result
@@ -154,7 +154,7 @@ def get_human_names(text):
 def RateSentiment(sentiString):
     """Senti Strength java software to get sentiment from tweets"""
     # open a subprocess using shlex to get the command line string into the correct args list format
-    p = subprocess.Popen(shlex.split("java -jar E:\Work\discussions-text-analysis\cancer\SentiStrength.jar stdin explain sentidata E:\Work\discussions-text-analysis\cancer\SentiStrength_Data/"),
+    p = subprocess.Popen(shlex.split("java -jar cancer/SentiStrength.jar stdin explain sentidata cancer/SentiStrength_Data/"),
                          stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # communicate via stdin the string to be rated. Note that all spaces are replaced with +
     stdout_text, stderr_text = p.communicate(

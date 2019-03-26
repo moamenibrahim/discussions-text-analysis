@@ -2,23 +2,27 @@ import json
 import nltk
 import shlex
 import subprocess
+import enchant
 from nltk.tag import StanfordNERTagger
 from nltk.tag import StanfordPOSTagger
 from nltk.corpus import wordnet as wn
+from IBM.ibmNLPunderstanding import AlchemyNLPunderstanding
 
+dictionary= enchant.Dict("en_US")
+NLP_understanding = AlchemyNLPunderstanding()
 
-def get_stanford_pos(self, tweet):
+def get_stanford_pos(tweet):
     """
     part of speech tagging extraction
     """
-    path_to_model = '../../cancer/stanford/stanford-postagger/models/english-bidirectional-distsim.tagger'
-    path_to_jar = '../../cancer/stanford/stanford-postagger/stanford-postagger.jar'
+    path_to_model = 'E:\\Work\\discussions-text-analysis\\cancer\\stanford\\stanford-postagger\\models\\'
+    path_to_jar = 'E:\\Work\\discussions-text-analysis\\cancer\\stanford\\stanford-postagger'
     st = StanfordPOSTagger(path_to_model, path_to_jar=path_to_jar)
     result = st.tag(tweet.split())
     return result
 
 
-def get_hyponyms(self, tweet):
+def get_hyponyms(tweet):
     """ 
     hyponyms extraction and checking the topics list 
     """
@@ -36,25 +40,25 @@ def get_hyponyms(self, tweet):
     return entities
 
 
-def get_stanford_named_entity(self, tweet):
+def get_stanford_named_entity(tweet):
     """ 
     get named entity recognition and check if words have entry in lexical database 
     """
-    stanford_dir = '../../cancer/stanford/stanford-nertagger/'
-    jarfile = stanford_dir + 'stanford-ner.jar'
-    modelfile = stanford_dir + 'classifiers/english.muc.7class.distsim.crf.ser.gz'
+    stanford_dir = 'E:\Work\discussions-text-analysis\cancer\stanford\stanford-nertagger'
+    jarfile = stanford_dir + '\stanford-ner.jar'
+    modelfile = stanford_dir + '\classifiers\english.muc.7class.distsim.crf.ser.gz'
     st = StanfordNERTagger(model_filename=modelfile, path_to_jar=jarfile)
     result = st.tag(tweet.split())
     return result
 
 
-def get_topic(self, input_str):
+def get_topic(input_str):
     """ 
     Topic extraction from text using LDA (Latent Dirichet Allocation): 
     It classifies the text according to whether it is family, friend, money related
     """
     try:
-        topic = self.lda.generate_topic(input_str)
+        topic = lda.generate_topic(input_str)
         return topic
 
     except:
@@ -62,26 +66,24 @@ def get_topic(self, input_str):
         return False
 
 
-def get_translate(self, input_str, lang):
+def get_translate(input_str, lang):
     """ using googletrans to translate text from any language to English """
     if(lang != 'und'):
         try:
-            translated = self.translator.translate(
+            translated = translator.translate(
                 input_str, dest='en', src=lang)
             return translated.text
         except:
             return False
 
 
-def get_sentiment(self, input_str):
+def get_sentiment(input_str):
     """ Get sentiment analysis when needed, the used API is IBM watson's """
-    return self.NLP_understanding.get_response(input_str)
+    return NLP_understanding.get_response(input_str)
 
 
 ''' Fetching information about users (tweeps) '''
-
-
-def analyze_location(self, fileName):
+def analyze_location(fileName):
     """ Method to analyze file by file and calls all other methods """
     staged_location = {}
     for line in fileName.readlines():
@@ -96,7 +98,7 @@ def analyze_location(self, fileName):
     return
 
 
-def analyze_user(self, fileName):
+def analyze_user(fileName):
     """ Method to analyze file by file and calls all other methods """
     staged_users = {}
     for line in fileName.readlines():
@@ -113,14 +115,14 @@ def analyze_user(self, fileName):
     return
 
 
-def check_dictionary(self, tweet):
+def check_dictionary(tweet):
     """Making sure that the translated text is in dictionary 
     to verify the translation of tweets"""
     in_dict = 0
     not_in_dict = 0
     text = nltk.word_tokenize(str(tweet))
     for word in text:
-        result = self.dictionary.check(word)
+        result = dictionary.check(word)
         if result == True:
             in_dict += 1
         else:
@@ -128,7 +130,7 @@ def check_dictionary(self, tweet):
     return in_dict/(in_dict+not_in_dict)
 
 
-def get_human_names(self, text):
+def get_human_names(text):
     """Catching human names from tweets"""
     tokens = nltk.tokenize.word_tokenize(text)
     pos = nltk.pos_tag(tokens)
@@ -149,10 +151,10 @@ def get_human_names(self, text):
     return (person_list)
 
 
-def RateSentiment(self, sentiString):
+def RateSentiment(sentiString):
     """Senti Strength java software to get sentiment from tweets"""
     # open a subprocess using shlex to get the command line string into the correct args list format
-    p = subprocess.Popen(shlex.split("java -jar ../../cancer/SentiStrength.jar stdin explain sentidata ../../cancer/SentiStrength_Data/"),
+    p = subprocess.Popen(shlex.split("java -jar E:\Work\discussions-text-analysis\cancer\SentiStrength.jar stdin explain sentidata E:\Work\discussions-text-analysis\cancer\SentiStrength_Data/"),
                          stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # communicate via stdin the string to be rated. Note that all spaces are replaced with +
     stdout_text, stderr_text = p.communicate(

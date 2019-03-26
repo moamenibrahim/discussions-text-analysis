@@ -19,3 +19,6 @@ mongodb/
 
 # Notebook checkpoints
 *-checkpoint.ipynb
+
+# helping programs
+cancer/

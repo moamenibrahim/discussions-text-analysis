@@ -3,6 +3,7 @@ import nltk
 import shlex
 import subprocess
 import enchant
+import lda_topic
 from nltk.tag import StanfordNERTagger
 from nltk.tag import StanfordPOSTagger
 from nltk.corpus import wordnet as wn
@@ -58,9 +59,8 @@ def get_topic(input_str):
     It classifies the text according to whether it is family, friend, money related
     """
     try:
-        topic = lda.generate_topic(input_str)
+        topic = lda_topic.generate_topic(input_str)
         return topic
-
     except:
         print("Failed to get topic")
         return False
@@ -159,8 +159,9 @@ def RateSentiment(sentiString):
     # communicate via stdin the string to be rated. Note that all spaces are replaced with +
     stdout_text, stderr_text = p.communicate(
         sentiString.replace(" ", "+").encode("utf-8"))
-    if stderr_text != None:
+    if len(stderr_text)>0:
         print("Error running sentistrength")
     # remove the tab spacing between the positive and negative ratings. e.g. 1    -5 -> 1-5
     stdout_text = stdout_text.decode("utf-8").rstrip().replace("\t", "")
-    return stdout_text[0], stdout_text[1:3]
+    if stdout_text:
+        return stdout_text[0], stdout_text[1:3]

@@ -1,3 +1,4 @@
+import re
 import json
 import nltk
 import shlex
@@ -9,8 +10,42 @@ from nltk.tag import StanfordPOSTagger
 from nltk.corpus import wordnet as wn
 from IBM.ibmNLPunderstanding import AlchemyNLPunderstanding
 
-dictionary= enchant.Dict("en_US")
+dictionary = enchant.Dict("en_US")
 NLP_understanding = AlchemyNLPunderstanding()
+
+
+def strip_links(text):
+    """Extracts links from tweets and returns it"""
+    link_regex = re.compile(
+        '((https?):((//)|(\\\\))+([\w\d:#@%/;$()~_?\+-=\\\.&](#!)?)*)', re.DOTALL)
+    links = re.findall(link_regex, text)
+    for link in links:
+        text = text.replace(link[0], ' ')
+    return text, links
+
+
+def strip_all_entities(text):
+    """Extracts mentions and hashtags from tweets and returns it"""
+    entity_prefixes = ['@', '#']
+    words = []
+    for word in text.split():
+        word = word.strip()
+        if word:
+            if word[0] not in entity_prefixes:
+                words.append(word)
+    return ' '.join(words)
+
+
+def remove_emojis(text):
+    emoji_pattern = re.compile("["
+                               u"\U0001F600-\U0001F64F"  # emoticons
+                               u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                               u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                               u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                               "]+", flags=re.UNICODE)
+
+    return emoji_pattern.sub(r'', text)  # no emoji
+
 
 def get_stanford_pos(tweet):
     """
@@ -82,7 +117,6 @@ def get_sentiment(input_str):
     return NLP_understanding.get_response(input_str)
 
 
-''' Fetching information about users (tweeps) '''
 def analyze_location(fileName):
     """ Method to analyze file by file and calls all other methods """
     staged_location = {}
@@ -159,7 +193,7 @@ def RateSentiment(sentiString):
     # communicate via stdin the string to be rated. Note that all spaces are replaced with +
     stdout_text, stderr_text = p.communicate(
         sentiString.replace(" ", "+").encode("utf-8"))
-    if len(stderr_text)>0:
+    if len(stderr_text) > 0:
         print("Error running sentistrength")
     # remove the tab spacing between the positive and negative ratings. e.g. 1    -5 -> 1-5
     stdout_text = stdout_text.decode("utf-8").rstrip().replace("\t", "")

@@ -1,3 +1,4 @@
+
 #%%
 import os
 import sys
@@ -11,7 +12,7 @@ import plotly.plotly as py
 import plotly.graph_objs as go
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt 
 import seaborn as sns
 
 plotly.tools.set_credentials_file(
@@ -27,7 +28,7 @@ porter = nltk.stem.porter.PorterStemmer()
 
 
 #%%
-df = data
+df = data 
 df.info()
 
 
@@ -54,7 +55,7 @@ re.findall(r'[\d]{1,2} [ADFJMNOS]\w* [\d]{4}', df['time'][0])
 #%%
 from dateutil.parser import parse
 ##'%m/%d/%Y %I:%M%p'
-df['time_adjusted']=df['time'].apply(lambda x: re.findall(r'[\d]{1,2} [ADFJMNOS]\w* [\d]{4}',x)[0])
+df['time_adjusted']=df['time'].apply(lambda x: re.findall(r'[\d]{1,2} [ADFJMNOS]\w* [\d]{4}',x)[0])    
 
 
 #%%
@@ -97,7 +98,7 @@ def add_to_dict(string_list):
             topic_items.append(item)
     except TypeError:
         pass
-
+        
 df['topic'].apply(lambda x: add_to_dict(x));
 staged_topics = Counter(topic_items)
 staged_topics = {x : staged_topics[x] for x in staged_topics if len(x) >= 3}
@@ -119,7 +120,7 @@ def add_to_sentiment(string_list):
             sentiment_items.append(item)
     except ValueError:
         pass
-
+        
 df['sentiment'].apply(lambda x: add_to_sentiment(x));
 staged_sentiment = Counter(sentiment_items)
 staged_sentiment = {x : staged_sentiment[x] for x in staged_sentiment if len(x) >= 1}
@@ -154,7 +155,10 @@ plt.show()
 
 
 #%%
+import cancerType
 
+for i,x in enumerate(df['tidy_text']):
+    cancerType.get_cancer_type(x, df.loc[i]['user'])
 
 
 #%%

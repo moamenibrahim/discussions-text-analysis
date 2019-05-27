@@ -5,7 +5,7 @@ venv-linux/
 # Visual studio code folder 
 .vscode/ 
 
-# Pycharm files
+# Pycharm folder 
 .idea/
 
 # Caches

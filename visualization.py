@@ -1,5 +1,4 @@
 
-#%%
 import os
 import sys
 import json
@@ -19,75 +18,58 @@ plotly.tools.set_credentials_file(
     username='moamenibrahim', api_key='mV0gCyPj5sIKGQqC78zC')
 
 
-#%%
 data  = pd.read_csv('scraped_data/processed.csv')
 
 
-#%%
 porter = nltk.stem.porter.PorterStemmer()
 
 
-#%%
 df = data 
 df.info()
 
 
-#%%
 df['main_thread']=df['time'].apply(lambda x: False if 'in response to' in x else True)
 
 
-#%%
 thread_divided = tuple(df.groupby(data['thread']))
 
 
-#%%
 tuple(df.groupby(data['thread']))
 
 
-#%%
 df.head()
 
 
-#%%
 re.findall(r'[\d]{1,2} [ADFJMNOS]\w* [\d]{4}', df['time'][0])
 
 
-#%%
 from dateutil.parser import parse
 ##'%m/%d/%Y %I:%M%p'
 df['time_adjusted']=df['time'].apply(lambda x: re.findall(r'[\d]{1,2} [ADFJMNOS]\w* [\d]{4}',x)[0])    
 
 
-#%%
 df.head()
 
 
-#%%
 
 
 
-#%%
 df['user'].value_counts().plot(kind='barh')
 
 
-#%%
 
 
 
-#%%
 df['sentiment'].value_counts().plot(kind='barh')
 
 
-#%%
 df['topic'].value_counts()[:20].plot(kind='barh')
 
 
-#%%
 import ast
 from collections import Counter
 
 
-#%%
 topic_items=[]
 
 def add_to_dict(string_list):
@@ -105,11 +87,9 @@ staged_topics = {x : staged_topics[x] for x in staged_topics if len(x) >= 3}
 staged_topics = sorted(staged_topics.items(), key=operator.itemgetter(1), reverse=True)
 
 
-#%%
 staged_topics
 
 
-#%%
 sentiment_items=[]
 
 def add_to_sentiment(string_list):
@@ -127,15 +107,12 @@ staged_sentiment = {x : staged_sentiment[x] for x in staged_sentiment if len(x) 
 staged_sentiment = sorted(staged_sentiment.items(), key=operator.itemgetter(1), reverse=True)
 
 
-#%%
 staged_sentiment
 
 
-#%%
 from math import log
 
 
-#%%
 testList = [(elem1, elem2) for elem1, elem2 in staged_sentiment]
 testList = sorted(testList, key=lambda x: int(x[0]))
 zip(*testList)
@@ -143,29 +120,24 @@ plt.scatter(*zip(*testList))
 plt.show()
 
 
-#%%
 testList2 = [(elem1, elem2) for elem1, elem2 in staged_topics][:12]
 zip(*testList2)
 plt.scatter(*zip(*testList2))
 plt.show()
 
 
-#%%
 
 
 
-#%%
 import cancerType
 
 for i,x in enumerate(df['tidy_text']):
     cancerType.get_cancer_type(x, df.loc[i]['user'])
 
 
-#%%
 
 
 
-#%%
 
 
 
